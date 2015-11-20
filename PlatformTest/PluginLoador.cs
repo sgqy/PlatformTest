@@ -21,19 +21,19 @@ namespace sgqy
         {
             if (!Directory.Exists(path)) return new IPlugin[] { };
 
-            // 得到 dll 文件列表
+            // 得到库文件列表
             return Directory.GetFiles(path, searchPattern)
-                // 获取 dll 文件的内部名称
+                // 获取库文件的内部名称并加载
                 .Select(x => Assembly.Load(AssemblyName.GetAssemblyName(x)))
-                // 过滤加载失败的项
+                // 过滤加载失败的库
                 .Where(x => x != null)
-                // 使用 SelectMany 拆包, 去掉所有接口库和抽象库
+                // 拆出所有类，并过滤接口类和抽象类
                 .SelectMany(x => x.GetTypes().Where(y => !y.IsInterface && !y.IsAbstract))
-                // 过滤所有不含名称的 Assembly
+                // 过滤所有不含 IPlugin 接口的类
                 .Where(x => x.GetInterface(typeof(IPlugin).FullName) != null)
-                // 所有重复的 dll 只选一个
+                // 所有重复的类里只选一个
                 .Distinct()
-                // 加载(实例化)这些 dll
+                // 加载(实例化)这些类
                 .Select(x => (IPlugin)Activator.CreateInstance(x))
                 ;
         }

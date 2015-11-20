@@ -21,4 +21,18 @@ namespace Plugin
             return tw.ToString();
         }
     }
+
+    public class Glynda : IData.IData
+    {
+        public string Name
+        {
+            get
+            { return "Glynda"; }
+        }
+
+        public string transmiss(Data[] d)
+        {
+            return "This is Glynda";
+        }
+    }
 }
